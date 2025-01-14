@@ -110,7 +110,7 @@ const ServiceDetailPage = () => {
        <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="container mx-auto px-4 py-8"
+        className="container mx-auto max-w-7xl px-4 py-8"
       >
         <div className="relative overflow-hidden rounded-[2rem] bg-purple-900">
           <div className="absolute inset-0">
@@ -153,7 +153,7 @@ const ServiceDetailPage = () => {
 
       {/* Main Features */}
       <section className="py-10 bg-gray-50">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto max-w-7xl px-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {serviceDetails.mainFeatures.map((feature, index) => (
               <motion.div
@@ -174,7 +174,7 @@ const ServiceDetailPage = () => {
 
       {/* Services Accordion */}
       <section className="py-10">
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto max-w-7xl px-4">
           <h2 className="text-3xl font-bold mb-12">Our Services</h2>
           {serviceDetails.servicesOffered.map((service, index) => (
             <motion.div
@@ -213,7 +213,7 @@ const ServiceDetailPage = () => {
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="container mx-auto px-4 pt-10 pb-20"
+        className="container mx-auto max-w-7xl px-4 pt-10 pb-20"
       >
         <div className="relative overflow-hidden rounded-[2rem]">
           {/* Gradient Background */}
