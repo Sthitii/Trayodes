@@ -4,12 +4,12 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { ChevronDown, Sparkles } from "lucide-react";
-import QuickConsult from '@/components/quick-consult/QuickConsult';
+import { Sparkles } from "lucide-react";
+import { useQuickConsult } from '@/context/QuickConsultContext';
 
 const Navbar = () => {
   const [activeMenu, setActiveMenu] = useState(null);
-  const [showQuickConsult, setShowQuickConsult] = useState(false);
+  const { setShowQuickConsult } = useQuickConsult();
 
   const services = [
     {
@@ -118,9 +118,7 @@ const Navbar = () => {
           </div>
         </div>
       </nav>
-      {showQuickConsult && (
-        <QuickConsult onClose={() => setShowQuickConsult(false)} />
-      )}
+     
 
       {/* Mega Menu Overlay */}
       <AnimatePresence>

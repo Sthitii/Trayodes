@@ -1,9 +1,10 @@
-// src/components/home/Hero.js
 'use client';
 
 import { motion } from 'framer-motion';
+import { useQuickConsult } from '@/context/QuickConsultContext';
 
 const Hero = () => {
+  const { setShowQuickConsult } = useQuickConsult();
   const fadeIn = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
@@ -85,8 +86,8 @@ const Hero = () => {
             <button className="bg-purple-700 text-white px-8 py-3 rounded-lg hover:bg-purple-800 transition-all hover:scale-105 font-medium">
               Explore Services
             </button>
-            <button className="border-2 border-purple-700 text-purple-700 px-8 py-3 rounded-lg hover:bg-purple-50 transition-all hover:scale-105 font-medium">
-              Contact Us
+            <button onClick={() => setShowQuickConsult(true)} className="border-2 border-purple-700 text-purple-700 px-8 py-3 rounded-lg hover:bg-purple-50 transition-all hover:scale-105 font-medium">
+              Quick Consult
             </button>
           </motion.div>
         </div>

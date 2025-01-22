@@ -1,4 +1,3 @@
-// src/components/quick-consult/QuickConsult.js
 "use client";
 
 import { useState } from "react";
