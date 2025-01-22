@@ -1,75 +1,62 @@
-// src/components/layout/Navbar.js
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { Sparkles } from "lucide-react";
-import { useQuickConsult } from '@/context/QuickConsultContext';
+import { Sparkles, ChevronDown, X } from "lucide-react";
+import { useQuickConsult } from "@/context/QuickConsultContext";
 
 const Navbar = () => {
   const [activeMenu, setActiveMenu] = useState(null);
+  const [services, setServices] = useState();
   const { setShowQuickConsult } = useQuickConsult();
 
-  const services = [
-    {
-      category: "Management & Strategy",
-      items: [
-        {
-          title: "Management Consulting",
-          description:
-            "Optimize operations and enhance organizational effectiveness",
-          link: "/services/management-consulting",
+  useEffect(() => {
+    getAllServices();
+  }, []);
+
+  const getAllServices = async () => {
+    try {
+      const response = await fetch("/api/admin/services", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
         },
-        {
-          title: "Strategy Consulting",
-          description:
-            "Develop comprehensive strategic frameworks for sustainable growth",
-          link: "/services/strategy-consulting",
-        },
-        {
-          title: "Business Development",
-          description:
-            "Accelerate growth through targeted market expansion strategies",
-          link: "/services/business-development",
-        },
-      ],
-    },
-    {
-      category: "Technology & Operations",
-      items: [
-        {
-          title: "Software/IT Consulting",
-          description:
-            "Leverage technology solutions aligned with business objectives",
-          link: "/services/it-consulting",
-        },
-        {
-          title: "Business Process Consulting",
-          description:
-            "Streamline operations and enhance efficiency through optimization",
-          link: "/services/process-consulting",
-        },
-      ],
-    },
-    {
-      category: "Financial Advisory",
-      items: [
-        {
-          title: "Venture Capital Consulting",
-          description:
-            "Expert guidance for startup funding and growth strategies",
-          link: "/services/venture-capital",
-        },
-        {
-          title: "Marketing Consulting",
-          description:
-            "Data-driven marketing strategies for measurable results",
-          link: "/services/marketing",
-        },
-      ],
-    },
-  ];
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to create service");
+      }
+      const result = await response.json();
+      const tranformedData = transformData(result);
+      setServices(tranformedData);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  const transformData = (data) => {
+    const groupedData = new Map();
+
+    data.forEach((item) => {
+      const { category, title, description, slug } = item;
+
+      if (!groupedData.has(category)) {
+        groupedData.set(category, []);
+      }
+
+      groupedData.get(category).push({
+        title,
+        description: description.split(".")[0], // Short description
+        link: `/services/${slug}`,
+      });
+    });
+
+    return Array.from(groupedData, ([category, items]) => ({
+      category,
+      items,
+    }));
+  };
 
   return (
     <>
@@ -77,13 +64,24 @@ const Navbar = () => {
         <div className="container mx-auto max-w-7xl px-4">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
-            <Link href="/" className="text-2xl font-bold text-purple-700">
+            <Link href="/" className="text-4xl font-bold text-purple-700">
               Trayodes
             </Link>
 
             {/* Navigation Items */}
             <div className="hidden md:flex items-center space-x-8">
               {/* Services Dropdown */}
+              <div className="relative">
+                <button
+                  className="flex items-center space-x-1 text-gray-700 hover:text-purple-700 transition-colors py-8"
+                  onClick={() =>
+                    setActiveMenu(activeMenu === "services" ? null : "services")
+                  }
+                >
+                  <span>Services</span>
+                  <ChevronDown size={16} />
+                </button>
+              </div>
 
               <Link
                 href="/about"
@@ -118,7 +116,6 @@ const Navbar = () => {
           </div>
         </div>
       </nav>
-     
 
       {/* Mega Menu Overlay */}
       <AnimatePresence>

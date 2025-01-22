@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { useQuickConsult } from '@/context/QuickConsultContext';
+import Link from 'next/link';
 
 const Hero = () => {
   const { setShowQuickConsult } = useQuickConsult();
@@ -83,9 +84,9 @@ const Hero = () => {
             animate={fadeIn.animate}
             transition={{ ...fadeIn.transition, delay: 0.4 }}
           >
-            <button className="bg-purple-700 text-white px-8 py-3 rounded-lg hover:bg-purple-800 transition-all hover:scale-105 font-medium">
+            <Link href={'/services'} className="bg-purple-700 text-white px-8 py-3 rounded-lg hover:bg-purple-800 transition-all hover:scale-105 font-medium">
               Explore Services
-            </button>
+            </Link>
             <button onClick={() => setShowQuickConsult(true)} className="border-2 border-purple-700 text-purple-700 px-8 py-3 rounded-lg hover:bg-purple-50 transition-all hover:scale-105 font-medium">
               Quick Consult
             </button>
