@@ -1,13 +1,15 @@
 // src/components/layout/Navbar.js
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import Link from 'next/link';
-import { ChevronDown, X } from 'lucide-react';
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
+import { ChevronDown, Sparkles } from "lucide-react";
+import QuickConsult from '@/components/quick-consult/QuickConsult';
 
 const Navbar = () => {
   const [activeMenu, setActiveMenu] = useState(null);
+  const [showQuickConsult, setShowQuickConsult] = useState(false);
 
   const services = [
     {
@@ -15,51 +17,58 @@ const Navbar = () => {
       items: [
         {
           title: "Management Consulting",
-          description: "Optimize operations and enhance organizational effectiveness",
-          link: "/services/management-consulting"
+          description:
+            "Optimize operations and enhance organizational effectiveness",
+          link: "/services/management-consulting",
         },
         {
           title: "Strategy Consulting",
-          description: "Develop comprehensive strategic frameworks for sustainable growth",
-          link: "/services/strategy-consulting"
+          description:
+            "Develop comprehensive strategic frameworks for sustainable growth",
+          link: "/services/strategy-consulting",
         },
         {
           title: "Business Development",
-          description: "Accelerate growth through targeted market expansion strategies",
-          link: "/services/business-development"
-        }
-      ]
+          description:
+            "Accelerate growth through targeted market expansion strategies",
+          link: "/services/business-development",
+        },
+      ],
     },
     {
       category: "Technology & Operations",
       items: [
         {
           title: "Software/IT Consulting",
-          description: "Leverage technology solutions aligned with business objectives",
-          link: "/services/it-consulting"
+          description:
+            "Leverage technology solutions aligned with business objectives",
+          link: "/services/it-consulting",
         },
         {
           title: "Business Process Consulting",
-          description: "Streamline operations and enhance efficiency through optimization",
-          link: "/services/process-consulting"
-        }
-      ]
+          description:
+            "Streamline operations and enhance efficiency through optimization",
+          link: "/services/process-consulting",
+        },
+      ],
     },
     {
       category: "Financial Advisory",
       items: [
         {
           title: "Venture Capital Consulting",
-          description: "Expert guidance for startup funding and growth strategies",
-          link: "/services/venture-capital"
+          description:
+            "Expert guidance for startup funding and growth strategies",
+          link: "/services/venture-capital",
         },
         {
           title: "Marketing Consulting",
-          description: "Data-driven marketing strategies for measurable results",
-          link: "/services/marketing"
-        }
-      ]
-    }
+          description:
+            "Data-driven marketing strategies for measurable results",
+          link: "/services/marketing",
+        },
+      ],
+    },
   ];
 
   return (
@@ -75,36 +84,47 @@ const Navbar = () => {
             {/* Navigation Items */}
             <div className="hidden md:flex items-center space-x-8">
               {/* Services Dropdown */}
-              <div className="relative">
-                <button 
-                  className="flex items-center space-x-1 text-gray-700 hover:text-purple-700 transition-colors py-8"
-                  onClick={() => setActiveMenu(activeMenu === 'services' ? null : 'services')}
-                >
-                  <span>Services</span>
-                  <ChevronDown size={16} />
-                </button>
-              </div>
 
-              <Link href="/about" className="text-gray-700 hover:text-purple-700 transition-colors">
+              <Link
+                href="/about"
+                className="text-gray-700 hover:text-purple-700 transition-colors"
+              >
                 About
               </Link>
-              <Link href="/insights" className="text-gray-700 hover:text-purple-700 transition-colors">
+              <Link
+                href="/insights"
+                className="text-gray-700 hover:text-purple-700 transition-colors"
+              >
                 Insights
               </Link>
-              <Link href="/contact" className="text-gray-700 hover:text-purple-700 transition-colors">
+              <Link
+                href="/contact"
+                className="text-gray-700 hover:text-purple-700 transition-colors"
+              >
                 Contact
               </Link>
-              <button className="bg-purple-700 text-white px-6 py-2 rounded-lg hover:bg-purple-800 transition-colors">
-                Get Started
+              <button
+                onClick={() => setShowQuickConsult(true)}
+                className="bg-gradient-to-r from-purple-600 to-indigo-600 
+                       text-white px-6 py-2 rounded-lg font-medium 
+                       hover:from-purple-700 hover:to-indigo-700 
+                       transition-all duration-300 shadow-md 
+                       hover:shadow-lg flex items-center gap-2"
+              >
+                <Sparkles className="w-4 h-4" />
+                Quick Consult
               </button>
             </div>
           </div>
         </div>
       </nav>
+      {showQuickConsult && (
+        <QuickConsult onClose={() => setShowQuickConsult(false)} />
+      )}
 
       {/* Mega Menu Overlay */}
       <AnimatePresence>
-        {activeMenu === 'services' && (
+        {activeMenu === "services" && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -159,7 +179,7 @@ const Navbar = () => {
 
       {/* Backdrop */}
       <AnimatePresence>
-        {activeMenu === 'services' && (
+        {activeMenu === "services" && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
