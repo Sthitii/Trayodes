@@ -1,4 +1,3 @@
-// app/admin/login/page.js
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -31,10 +30,11 @@ export default function AdminLogin() {
         redirect: false,
       });
 
-      if (!result?.error) {
-        router.push('/admin/dashboard');
-      } else {
+      if (result?.error) {
         setError('Invalid credentials');
+      } else {
+        // Wait for the session to update before redirecting
+        router.push('/admin/dashboard');
       }
     } catch (error) {
       setError('An error occurred');

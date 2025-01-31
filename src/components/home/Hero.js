@@ -74,8 +74,7 @@ const Hero = () => {
             animate={fadeIn.animate}
             transition={{ ...fadeIn.transition, delay: 0.2 }}
           >
-            Expert consulting services in management, strategy, and digital transformation. 
-            We combine global expertise with local insight to drive your success.
+            Specializing in venture capital investments & Private Equity with additional consulting services in management, strategy, AI adoption and digital transformation. We combine global expertise with local insight to drive your growth and success.
           </motion.p>
 
           <motion.div

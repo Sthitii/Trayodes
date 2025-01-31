@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { Sparkles, ChevronDown, X } from "lucide-react";
 import { useQuickConsult } from "@/context/QuickConsultContext";
+import Image from "next/image";
+import Logo from "@/assets/logo/Trayodes_Symbol.png";
 
 const Navbar = () => {
   const [activeMenu, setActiveMenu] = useState(null);
@@ -64,8 +66,12 @@ const Navbar = () => {
         <div className="container mx-auto max-w-7xl px-4">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
-            <Link href="/" className="text-4xl font-bold text-purple-700">
-              Trayodes
+            <Link href="/" >
+            <div className="flex justify-center items-center gap-0">
+              <Image src={Logo} alt="Trayodes_Logo" width={27} />
+              <span className="text-3xl font-bold">rayodes</span>
+            </div>
+              
             </Link>
 
             {/* Navigation Items */}

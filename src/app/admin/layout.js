@@ -31,7 +31,7 @@ const sidebarLinks = [
   {
     title: 'Blog Posts',
     icon: Book,
-    href: '/admin/blog',
+    href: '/admin/blogs',
   },
   {
     title: 'Case Studies',
