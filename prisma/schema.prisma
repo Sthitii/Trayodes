@@ -1,10 +1,11 @@
+// prisma/schema.prisma
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider     = "postgresql"
+  url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
@@ -14,84 +15,94 @@ model User {
   email         String         @unique
   name          String?
   passwordHash  String
-  role          String         @default("USER")
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  // Added relations
-  blogPosts     BlogPost[]     // Relation to BlogPost
+  role          Role          @default(USER)
+  bio          String?        @db.Text
+  avatarUrl    String?
+  isActive     Boolean        @default(true)
+  lastLogin    DateTime?
+  blogPosts    BlogPost[]     // Relation to BlogPost
   quizResponses QuizResponse[] // Relation to QuizResponse
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  // Activity tracking
+  activities   ActivityLog[]
+  createdServices Service[]   @relation("ServiceCreator")
+  updatedServices Service[]   @relation("ServiceUpdater")
 }
 
-// Services
+enum Role {
+  ADMIN
+  AUTHOR
+  USER
+}
+
+// Services Management
 model Service {
-  id          String       @id @default(cuid())
-  title       String
-  slug        String       @unique
-  description String?      @db.Text
-  category    String?
-  content     String?      @db.Text
-  isActive    Boolean      @default(true)
-  caseStudies CaseStudy[]
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id           String       @id @default(cuid())
+  title        String
+  slug         String       @unique
+  description  String?      @db.Text
+  content      String?      @db.Text
+  category     String?
+  icon         String?      // Store icon name or URL
+  features     String[]     // Array of service features
+  pricing      Json?        // Flexible pricing structure
+  status       String      @default("active")
+  isActive     Boolean     @default(true)
+  order        Int         @default(0)
+  
+  // Relations
+  caseStudies  CaseStudy[]
+  createdBy    User        @relation("ServiceCreator", fields: [creatorId], references: [id])
+  creatorId    String
+  updatedBy    User?       @relation("ServiceUpdater", fields: [updaterId], references: [id])
+  updaterId    String?
+  
+  // Metadata
+  seoTitle     String?
+  seoDesc      String?     @db.Text
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  @@index([creatorId])
+  @@index([updaterId])
 }
 
-// Blog Posts
+// Blog System
 model BlogPost {
   id            String    @id @default(cuid())
   title         String
   slug          String    @unique
   content       String?   @db.Text
   excerpt       String?   @db.Text
+  status        String    @default("draft") // draft, published, archived
+  
+  // SEO and Meta
+  featuredImage String?
+  seoTitle      String?
+  seoDesc       String?   @db.Text
+  tags          Tag[]
+  
+  // Categories and Classification
+  industry      String?
+  readTime      Int?      // Estimated reading time in minutes
+  
+  // Analytics
+  views         Int       @default(0)
+  likes         Int       @default(0)
+  
+  // Relations
   author        User      @relation(fields: [authorId], references: [id])
   authorId      String
-  featuredImage String?
-  status        String    @default("draft")
-  industry      String?
-  readTime      Int?
-  views         Int       @default(0)
+  comments      Comment[]
+  
+  // Timestamps
+  publishedAt   DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-}
 
-// Quiz System
-model QuizQuestion {
-  id          String       @id @default(cuid())
-  question    String       @db.Text
-  orderNumber Int
-  isActive    Boolean      @default(true)
-  options     QuizOption[]
-  createdAt   DateTime     @default(now())
-}
-
-model QuizOption {
-  id          String       @id @default(cuid())
-  question    QuizQuestion @relation(fields: [questionId], references: [id])
-  questionId  String
-  optionText  String       @db.Text
-  points      Json?
-  createdAt   DateTime     @default(now())
-}
-
-model QuizResponse {
-  id                   String    @id @default(cuid())
-  user                 User      @relation(fields: [userId], references: [id])
-  userId               String
-  responses            Json
-  recommendedServiceId String?
-  createdAt            DateTime  @default(now())
-}
-
-// Contact and Leads
-model ContactSubmission {
-  id              String    @id @default(cuid())
-  name            String?
-  email           String
-  company         String?
-  message         String?   @db.Text
-  serviceInterest String?
-  status          String    @default("new")
-  createdAt       DateTime  @default(now())
+  @@index([authorId])
 }
 
 // Case Studies
@@ -101,27 +112,156 @@ model CaseStudy {
   slug          String    @unique
   clientName    String?
   industry      String?
+  
+  // Content Sections
   challenge     String?   @db.Text
   solution      String?   @db.Text
   results       String?   @db.Text
+  testimonial   String?   @db.Text
+  
+  // Media
   featuredImage String?
+  gallery       Json?     // Array of image URLs
+  
+  // Relations
   service       Service   @relation(fields: [serviceId], references: [id])
   serviceId     String
+  tags          Tag[]
+  
+  // Analytics and Status
+  views         Int       @default(0)
+  status        String    @default("draft")
+  order         Int       @default(0)
+  
+  // SEO and Meta
+  seoTitle      String?
+  seoDesc       String?   @db.Text
+  
+  // Timestamps
+  publishedAt   DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+
+  @@index([serviceId])
+}
+
+// Quiz System
+model QuizQuestion {
+  id           String       @id @default(cuid())
+  question     String       @db.Text
+  type         String      @default("multiple_choice") // multiple_choice, open_ended
+  orderNumber  Int
+  isActive     Boolean     @default(true)
+  options      QuizOption[]
+  createdAt    DateTime    @default(now())
+}
+
+model QuizOption {
+  id           String       @id @default(cuid())
+  question     QuizQuestion @relation(fields: [questionId], references: [id])
+  questionId   String
+  optionText   String      @db.Text
+  points       Json?       // Scoring criteria or weight
+  createdAt    DateTime    @default(now())
+
+  @@index([questionId])
+}
+
+model QuizResponse {
+  id                    String    @id @default(cuid())
+  user                  User      @relation(fields: [userId], references: [id])
+  userId                String
+  responses             Json      // Store user's answers
+  score                 Int?
+  recommendedServiceId  String?
+  createdAt            DateTime  @default(now())
+
+  @@index([userId])
+}
+
+// Contact and Leads Management
+model ContactSubmission {
+  id              String    @id @default(cuid())
+  name            String?
+  email           String
+  company         String?
+  phone           String?
+  message         String?   @db.Text
+  serviceInterest String?
+  source          String?   // Where the lead came from
+  status          String    @default("new")
+  priority        String    @default("normal")
+  notes           String?   @db.Text
+  assignedTo      String?   // User ID of assigned team member
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 }
 
 // Team Members
 model TeamMember {
+  id           String    @id @default(cuid())
+  name         String
+  position     String?
+  department   String?
+  bio          String?   @db.Text
+  image        String?
+  linkedinUrl  String?
+  twitterUrl   String?
+  email        String?
+  phone        String?
+  orderNumber  Int?
+  isActive     Boolean   @default(true)
+  expertise    String[]  // Array of expertise areas
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+}
+
+// Comments System
+model Comment {
   id          String    @id @default(cuid())
+  content     String    @db.Text
+  blogPost    BlogPost  @relation(fields: [blogPostId], references: [id])
+  blogPostId  String
   name        String
-  position    String?
-  bio         String?   @db.Text
-  image       String?
-  linkedinUrl String?
-  email       String?
-  orderNumber Int?
-  isActive    Boolean   @default(true)
+  email       String
+  isApproved  Boolean   @default(false)
   createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+
+  @@index([blogPostId])
+}
+
+// Tags for Blog Posts and Case Studies
+model Tag {
+  id          String      @id @default(cuid())
+  name        String      @unique
+  slug        String      @unique
+  blogPosts   BlogPost[]
+  caseStudies CaseStudy[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+// Activity Logging
+model ActivityLog {
+  id          String    @id @default(cuid())
+  user        User      @relation(fields: [userId], references: [id])
+  userId      String
+  action      String    // create, update, delete, view
+  entityType  String    // BlogPost, Service, CaseStudy, etc.
+  entityId    String
+  details     Json?     // Additional activity details
+  timestamp   DateTime  @default(now())
+
+  @@index([userId])
+  @@index([entityType, entityId])
+}
+
+// Analytics
+model PageView {
+  id          String    @id @default(cuid())
+  path        String
+  userAgent   String?
+  ipAddress   String?
+  referrer    String?
+  timestamp   DateTime  @default(now())
 }
