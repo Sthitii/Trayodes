@@ -3,117 +3,59 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { Sparkles, ChevronDown, X } from "lucide-react";
+import { Sparkles, ChevronDown, X, BookOpen, Briefcase, Code, GraduationCap, Users, Handshake, Globe, FileText, UserCheck, Rocket } from "lucide-react";
 import { useQuickConsult } from "@/context/QuickConsultContext";
 import Image from "next/image";
-import Logo from "@/assets/logo/Trayodes_Symbol.png";
+import Logo from "@/assets/logo/Trayodes_Logo.png";
+import { useRouter } from "next/navigation";
 
 const Navbar = () => {
   const [activeMenu, setActiveMenu] = useState(null);
-  const [services, setServices] = useState();
   const { setShowQuickConsult } = useQuickConsult();
+  const router = useRouter()
 
-  useEffect(() => {
-    getAllServices();
-  }, []);
-
-  const getAllServices = async () => {
-    try {
-      const response = await fetch("/api/admin/services", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to create service");
-      }
-      const result = await response.json();
-      const tranformedData = transformData(result);
-      setServices(tranformedData);
-    } catch (error) {
-      setError(error.message);
-    }
-  };
-
-  const transformData = (data) => {
-    const groupedData = new Map();
-
-    data.forEach((item) => {
-      const { category, title, description, slug } = item;
-
-      if (!groupedData.has(category)) {
-        groupedData.set(category, []);
-      }
-
-      groupedData.get(category).push({
-        title,
-        description: description.split(".")[0], // Short description
-        link: `/services/${slug}`,
-      });
-    });
-
-    return Array.from(groupedData, ([category, items]) => ({
-      category,
-      items,
-    }));
-  };
-
+ 
+  const handleRedirect = (x) =>{
+    router.push(x);
+  }
   return (
     <>
       <nav className="fixed top-0 left-0 right-0 bg-white shadow-sm z-50">
         <div className="container mx-auto max-w-7xl px-4">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
-            <Link href="/" >
-            <div className="flex justify-center items-center gap-0">
-              <Image src={Logo} alt="Trayodes_Logo" width={27} />
-              <span className="text-3xl font-bold">rayodes</span>
-            </div>
-              
+            <Link href="/">
+              <div className="flex justify-center items-center gap-2">
+                <Image src={Logo} alt="Trayodes_Logo" width={120} height={100} />
+                
+              </div>
             </Link>
 
             {/* Navigation Items */}
             <div className="hidden md:flex items-center space-x-8">
               {/* Services Dropdown */}
-              <div className="relative">
+              {/* <div className="relative">
                 <button
-                  className="flex items-center space-x-1 text-gray-700 hover:text-purple-700 transition-colors py-8"
-                  onClick={() =>
-                    setActiveMenu(activeMenu === "services" ? null : "services")
-                  }
+                  className="flex items-center space-x-1 text-lg text-gray-700 hover:text-purple-600 transition-colors py-8" 
+                  onClick={()=>handleRedirect('/contact')}                
                 >
-                  <span>Services</span>
-                  <ChevronDown size={16} />
+                  <span>Contact</span>
+               
                 </button>
               </div>
+              <div className="relative">
+                <button
+                  className="flex items-center space-x-1 text-lg text-gray-700 hover:text-purple-600 transition-colors py-8"                 
+                >
+                  <span>About</span>
+               
+                </button>
+              </div> */}
 
-              <Link
-                href="/about"
-                className="text-gray-700 hover:text-purple-700 transition-colors"
-              >
-                About
-              </Link>
-              <Link
-                href="/insights"
-                className="text-gray-700 hover:text-purple-700 transition-colors"
-              >
-                Insights
-              </Link>
-              <Link
-                href="/contact"
-                className="text-gray-700 hover:text-purple-700 transition-colors"
-              >
-                Contact
-              </Link>
+              {/* Quick Consult Button */}
               <button
                 onClick={() => setShowQuickConsult(true)}
-                className="bg-gradient-to-r from-purple-600 to-indigo-600 
-                       text-white px-6 py-2 rounded-lg font-medium 
-                       hover:from-purple-700 hover:to-indigo-700 
-                       transition-all duration-300 shadow-md 
-                       hover:shadow-lg flex items-center gap-2"
+                className="bg-purple-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-purple-700 transition-all duration-300 shadow-md hover:shadow-lg flex items-center gap-2"
               >
                 <Sparkles className="w-4 h-4" />
                 Quick Consult
@@ -145,9 +87,10 @@ const Navbar = () => {
               {/* Menu Content */}
               <div className="container mx-auto px-4 py-12">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-                  {services.map((category) => (
+                  {services?.map((category) => (
                     <div key={category.category} className="space-y-8">
-                      <h3 className="text-gray-400 font-medium tracking-wide uppercase text-sm px-4">
+                      <h3 className="text-gray-400 font-medium tracking-wide uppercase text-sm px-4 flex items-center gap-2">
+                        {getCategoryIcon(category.category)}
                         {category.category}
                       </h3>
                       <div className="space-y-6">

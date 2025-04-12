@@ -87,6 +87,8 @@ model ContactSubmission {
   id              String    @id @default(cuid())
   name            String?
   email           String
+  expertName            String?
+  expertEmail           String
   company         String?
   message         String?   @db.Text
   serviceInterest String?

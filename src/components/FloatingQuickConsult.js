@@ -22,6 +22,7 @@ const FloatingQuickConsult = () => {
                    shadow-lg hover:bg-purple-700 transition-colors"
       >
         <Sparkles className="w-6 h-6" />
+        
       </motion.button>
 
       <AnimatePresence>

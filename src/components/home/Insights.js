@@ -46,7 +46,7 @@ const InsightsSection = () => {
   const categories = ["Featured", "Latest Reports", "Case Studies", "Industry Insights", "Market Analysis"];
 
   return (
-    <section className="py-20 bg-gray-50">
+    <section className="py-8 px-4">
       <div className="container mx-auto max-w-7xl px-4">
         {/* Header */}
         <motion.div
@@ -111,7 +111,7 @@ const InsightsSection = () => {
               </div>
 
               {/* Content */}
-              <div className="p-6">
+              <div className="p-6 z-0">
                 <h3 className="text-xl font-bold mb-3 group-hover:text-purple-700 
                              transition-colors">
                   {insight.title}

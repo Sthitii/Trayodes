@@ -100,6 +100,7 @@ export default function NewService() {
               <option value="Management & Strategy">Management & Strategy</option>
               <option value="Technology & Operations">Technology & Operations</option>
               <option value="Financial Advisory">Financial Advisory</option>
+              <option value="Student Services">Student Services</option>
             </select>
           </div>
 
