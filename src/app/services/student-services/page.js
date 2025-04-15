@@ -10,7 +10,7 @@ import {
   Briefcase,
   Rocket,
 } from "lucide-react";
-import cons2 from "@/assets/images/cons2.jpg";
+import cons2 from "@/assets/images/cons1.jpg";
 import Image from "next/image";
 import Link from "next/link";
 import ConsultationForm from "@/components/studentServices/consultationForm";
